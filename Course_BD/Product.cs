@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Course_BD
+﻿namespace Course_BD
 {
     public class Product
     {
-        public int ID { get; set; }
-        public long UPCEAN { get; set; }
+        public int Id { get; set; }
+        public long Upcean { get; set; }
         public string Name { get; set; }
-        public int BrandID { get; set; }
-        public int CategoryID { get; set; }
+        public int BrandId { get; set; }
+        public int CategoryId { get; set; }
     }
 }

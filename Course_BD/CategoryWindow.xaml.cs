@@ -94,7 +94,7 @@ namespace Course_BD
         {
             _recipes = new List<string>();
             _recipeId = new List<int>();
-            var t = Controller.GetRecipes("");
+            var t = Controller.GetRecipes("", 0, 0, Double.MaxValue);
             foreach (var p in t)
             {
                 _recipes.Add(p.Name);

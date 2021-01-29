@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Data.SQLite;
 using Microsoft.Win32;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Course_BD
 {
@@ -20,18 +21,25 @@ namespace Course_BD
         private List<string> _categories;
         public List<Recipe> FilteredRecipesList;
         private List<Category> _filteredCategoriesList;
+        private static readonly Regex Regex = new Regex("[^0-9.]");
 
         public MainWindow()
         {
-            var recipesList = Controller.GetRecipes("");
+            InitializeComponent();
+            var recipesList = Controller.GetRecipes("", SortCB.SelectedIndex, FromBox.Text == "" ? 0 : Convert.ToDouble(FromBox.Text), ToBox.Text == "" ? Double.MaxValue : Convert.ToDouble(ToBox.Text));
             FilteredRecipesList = recipesList;
             var categoriesList = Controller.GetCategories();
             _filteredCategoriesList = categoriesList;
-            InitializeComponent();
             LoadCategoriesList();
             CategoryCb.ItemsSource = _categories;
+            FromBox.Text = 0.ToString();
+            ToBox.Text = Double.MaxValue.ToString();
         }
 
+        private static bool IsTextAllowed(string text)
+        {
+            return Regex.IsMatch(text);
+        }
         public void LoadRecipes()
         {
             RecipesStack.Children.Clear();
@@ -163,7 +171,7 @@ namespace Course_BD
 
         private void RecipesTab_Selected(object sender, RoutedEventArgs e)
         {
-            FilteredRecipesList = Controller.GetRecipes("");
+            FilteredRecipesList = Controller.GetRecipes("", SortCB.SelectedIndex, FromBox.Text == "" ? 0 : Convert.ToDouble(FromBox.Text), ToBox.Text == "" ? Double.MaxValue : Convert.ToDouble(ToBox.Text));
             CategoryCb.SelectedIndex = -1;
             LoadRecipes();
         }
@@ -184,8 +192,8 @@ namespace Course_BD
         private void CategoryCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             FilteredRecipesList = CategoryCb.SelectedIndex != -1
-                ? Controller.GetRecipes(CategoryCb.SelectedItem.ToString())
-                : Controller.GetRecipes("");
+                ? Controller.GetRecipes(CategoryCb.SelectedItem.ToString(), SortCB.SelectedIndex, FromBox.Text == "" ? 0 : Convert.ToDouble(FromBox.Text), ToBox.Text == "" ? Double.MaxValue : Convert.ToDouble(ToBox.Text))
+                : Controller.GetRecipes("", SortCB.SelectedIndex, FromBox.Text == "" ? 0 : Convert.ToDouble(FromBox.Text), ToBox.Text == "" ? Double.MaxValue : Convert.ToDouble(ToBox.Text));
             LoadRecipes();
         }
 
@@ -202,7 +210,6 @@ namespace Course_BD
         private void WarehouseTab_Selected(object sender, RoutedEventArgs e)
         {
             LoadWarehouseList();
-            ProductColumn.ItemsSource = _products;
             WhDataGrid.DataContext = _filteredWhProductList;
         }
 
@@ -224,6 +231,7 @@ namespace Course_BD
             {
                 _products.Add(p.Name);
             }
+            ProductColumn.ItemsSource = _products;
         }
 
         private void SearchWarehouseTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -324,6 +332,30 @@ namespace Course_BD
             saveFileDialog1.ShowDialog();
             if (saveFileDialog1.FileName.Length > 0)
                 File.WriteAllText(saveFileDialog1.FileName, Controller.GetStatistics());
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            var p = new ProductWindow(this);
+            Hide();
+            p.Show();
+        }
+
+        private void SortCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FilteredRecipesList = Controller.GetRecipes(CategoryCb.SelectedItem == null ? "" : CategoryCb.SelectedItem.ToString(), SortCB.SelectedIndex, FromBox.Text == "" ? 0 : Convert.ToDouble(FromBox.Text), ToBox.Text == "" ? Double.MaxValue : Convert.ToDouble(ToBox.Text));
+            LoadRecipes();
+        }
+
+        private void FromBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = IsTextAllowed(e.Text);
+        }
+
+        private void FilterBtn_Click(object sender, RoutedEventArgs e)
+        {
+            FilteredRecipesList = Controller.GetRecipes(CategoryCb.SelectedItem == null ? "" : CategoryCb.SelectedItem.ToString(), SortCB.SelectedIndex == -1 ? 0 : 1, FromBox.Text == "" ? 0 : Convert.ToDouble(FromBox.Text), ToBox.Text == "" ? Double.MaxValue : Convert.ToDouble(ToBox.Text));
+            LoadRecipes();
         }
     }
 }

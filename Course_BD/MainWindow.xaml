@@ -10,10 +10,11 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
                     <RowDefinition />
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
                     <Label Content="Категорія:" />
                     <ComboBox Name="CategoryCb" DataContext="{Binding}" Width="200" Margin="2"
                               SelectionChanged="CategoryCB_SelectionChanged" />
@@ -22,11 +23,23 @@
                              MinWidth="100" Name="SearchTermTextBox" />
                     <Button Content="Статистика" Width="100" Click="StatisticsButton_Click"
                             Margin="5" />
+                    <ComboBox Name="SortCB" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" SelectionChanged="SortCB_SelectionChanged">
+                        <ComboBoxItem Content="По алфавіту"/>
+                        <ComboBoxItem Content="Проти алфавіту"/>
+                    </ComboBox>
                 </StackPanel>
-                <ScrollViewer Grid.Row="1">
+                <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <Label Content="Фільтр по калоріям:" Margin="3"/>
+                    <Label Content="Від:" Margin="3"/>
+                    <TextBox Name="FromBox" Width="50" Margin="3" PreviewTextInput="FromBox_PreviewTextInput" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Label Content="До:" Margin="3"/>
+                    <TextBox Name="ToBox" Width="50" Margin="3" PreviewTextInput="FromBox_PreviewTextInput" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Button Name="FilterBtn" Click="FilterBtn_Click" Content="Фільтрувати" Margin="3"/>
+                </StackPanel>
+                <ScrollViewer Grid.Row="2">
                     <StackPanel Orientation="Vertical" Margin="10" Name="RecipesStack" Background="AliceBlue" />
                 </ScrollViewer>
-                <Button Click="NewRecipeButton_Click" Content="Додати новий рецепт" Grid.Row="2" />
+                <Button Click="NewRecipeButton_Click" Content="Додати новий рецепт" Grid.Row="3" />
             </Grid>
         </TabItem>
         <TabItem Header="Категорії" Selector.Selected="CategoriesTab_Selected">
@@ -67,6 +80,7 @@
                              Margin="5" MinWidth="100" Name="SearchWarehouseTextBox" />
                     <Button Content="Зберегти" Click="Button_Click_1" Margin="5" Width="100" />
                     <Button Content="Витрачені за місяць продукти" Click="Button_Click" Margin="5" Width="200" />
+                    <Button Content="Новий продукт" Click="Button_Click_2"  Margin="5" Width="100" />
                 </StackPanel>
                 <ScrollViewer Grid.Row="1">
                     <DataGrid ItemsSource="{Binding}" Name="WhDataGrid" AutoGenerateColumns="False">

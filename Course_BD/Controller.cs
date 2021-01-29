@@ -8,9 +8,10 @@ namespace Course_BD
     {
         public static readonly string DbPath = AppDomain.CurrentDomain.BaseDirectory + "\\recipe_book.db";
 
-        public static List<Recipe> GetRecipes(string categoryName)
+        public static List<Recipe> GetRecipes(string categoryName, int order, double from, double to)
         {
             var res = new List<Recipe>();
+            var p = order == 0 ? "ASC" : "DESC";
             if (categoryName == "")
             {
                 using SQLiteConnection connect = new SQLiteConnection($"Data Source={DbPath}");
@@ -18,7 +19,7 @@ namespace Course_BD
                 SQLiteCommand command = new SQLiteCommand
                 {
                     Connection = connect,
-                    CommandText = @"SELECT * FROM Recipe"
+                    CommandText = $"SELECT * FROM Recipe WHERE Calories >= {from} AND Calories <= {to} ORDER BY Name {p}"
                 };
                 SQLiteDataReader sqlReader = command.ExecuteReader();
                 while (sqlReader.Read())
@@ -47,7 +48,7 @@ namespace Course_BD
                 {
                     Connection = connect,
                     CommandText =
-                        $"SELECT * FROM Recipe LEFT JOIN WhereRecipeBelongs ON Recipe.RecipeID = WhereRecipeBelongs.RecipeID WHERE WhereRecipeBelongs.CategoryName = '{categoryName}'"
+                        $"SELECT * FROM Recipe LEFT JOIN WhereRecipeBelongs ON Recipe.RecipeID = WhereRecipeBelongs.RecipeID WHERE WhereRecipeBelongs.CategoryName = '{categoryName}' AND Calories >= {from} AND Calories <= {to} ORDER BY Name {p}"
                 };
                 SQLiteDataReader sqlReader = command.ExecuteReader();
                 while (sqlReader.Read())
@@ -68,7 +69,6 @@ namespace Course_BD
 
                 connect.Close();
             }
-
             return res;
         }
 
@@ -167,7 +167,7 @@ namespace Course_BD
             {
                 Product t = new Product
                 {
-                    Upcean = sqlReader.GetInt64(0),
+                    Upcean = sqlReader.GetValue(0).ToString() == "0" ? 0 : sqlReader.GetInt64(0),
                     Id = sqlReader.GetInt32(1),
                     BrandId = sqlReader.GetInt32(2),
                     CategoryId = sqlReader.GetInt32(3),
@@ -196,7 +196,9 @@ namespace Course_BD
             {
                 WhProduct t = new WhProduct
                 {
-                    Id = sqlReader.GetInt32(0), Amount = sqlReader.GetDouble(1), Name = sqlReader.GetString(6)
+                    Id = sqlReader.GetInt32(0),
+                    Amount = sqlReader.GetDouble(1),
+                    Name = sqlReader.GetString(6)
                 };
                 res.Add(t);
             }
@@ -214,43 +216,24 @@ namespace Course_BD
             SQLiteCommand command = new SQLiteCommand
             {
                 Connection = connect,
-                CommandText = "SELECT * FROM Recipe"
+                CommandText =
+                    "SELECT Recipe.* FROM Recipe LEFT JOIN Ingredient ON Recipe.RecipeID = Ingredient.RecipeID LEFT JOIN Warehouse ON Warehouse.ProductID = Ingredient.ProductID GROUP BY Recipe.RecipeID HAVING SUM(Ingredient.Amount <= Warehouse.Amount) == COUNT(Ingredient.Amount); "
             };
             SQLiteDataReader sqlReader = command.ExecuteReader();
             while (sqlReader.Read())
             {
-                SQLiteCommand anotherCommand = new SQLiteCommand
+                Recipe t = new Recipe
                 {
-                    Connection = connect,
-                    CommandText =
-                        $"SELECT Ingredient.Amount IA, Warehouse.Amount WA FROM Ingredient LEFT JOIN Warehouse ON Warehouse.ProductID = Ingredient.ProductID WHERE Ingredient.RecipeID = {sqlReader.GetInt32(0)} "
+                    Id = sqlReader.GetInt32(0),
+                    Name = sqlReader.GetString(1),
+                    Instruction = sqlReader.GetString(2),
+                    Time = sqlReader.GetInt32(3),
+                    Proteins = sqlReader.GetDouble(4),
+                    Fats = sqlReader.GetDouble(5),
+                    Carbohydrates = sqlReader.GetDouble(6),
+                    Calories = sqlReader.GetDouble(7)
                 };
-                SQLiteDataReader reader = anotherCommand.ExecuteReader();
-                bool p = true;
-                while (reader.Read())
-                {
-                    if (reader.GetDouble(0) > (reader.GetValue(1).ToString() == "" ? 0 : reader.GetDouble(1)))
-                    {
-                        p = false;
-                        break;
-                    }
-                }
-
-                if (p)
-                {
-                    Recipe t = new Recipe
-                    {
-                        Id = sqlReader.GetInt32(0),
-                        Name = sqlReader.GetString(1),
-                        Instruction = sqlReader.GetString(2),
-                        Time = sqlReader.GetInt32(3),
-                        Proteins = sqlReader.GetDouble(4),
-                        Fats = sqlReader.GetDouble(5),
-                        Carbohydrates = sqlReader.GetDouble(6),
-                        Calories = sqlReader.GetDouble(7)
-                    };
-                    res.Add(t);
-                }
+                res.Add(t);
             }
 
             connect.Close();

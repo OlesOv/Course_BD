@@ -10,4 +10,11 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="BrandWindow - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>BrandWindow.xaml.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

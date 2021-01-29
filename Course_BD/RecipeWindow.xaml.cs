@@ -272,7 +272,7 @@ namespace Course_BD
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            _mParent.FilteredRecipesList = Controller.GetRecipes("");
+            _mParent.FilteredRecipesList = Controller.GetRecipes("", 0, 0, Double.MaxValue);
             _mParent.LoadRecipes();
             _mParent.Show();
         }

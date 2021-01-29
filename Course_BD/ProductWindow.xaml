@@ -1,0 +1,35 @@
+﻿<Window x:Class="Course_BD.ProductWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="ProductWindow" MinHeight="320" MinWidth="450" Height="320" Width="450">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.7*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label Content="Назва:" Grid.Row="0" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Label Content="Штрих-код:" Grid.Row="1" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Label Content="Категорія:" Grid.Row="2" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Label Content="Бренд:" Grid.Row="3" Grid.Column="0" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBox Name="NameBox" Grid.Row="0" Grid.Column="1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="150" TextWrapping="NoWrap"/>
+        <TextBox Name="UpceanBox" Grid.Row="1" Grid.Column="1" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="150" TextWrapping="NoWrap"/>
+        <ComboBox Name="CategoryCB" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" FontSize="16"/>
+        <ComboBox Name="BrandCB" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="150" FontSize="16"/>
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="10">
+            <Button Content="Нова категорія" Click="Button_Click" Margin="5" FontSize="16"/>
+            <Button Content="Новий бренд" Click="Button_Click_1" Margin="5" FontSize="16"/>
+            <Button Content="Скасувати" Click="Button_Click_3"  Margin="5" Width="100" FontSize="16"/>
+            <Button Content="OK" Click="Button_Click_2" Margin="5" Width="50" FontSize="16"/>
+        </StackPanel>
+    </Grid>
+</Window>
